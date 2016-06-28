@@ -1,0 +1,6 @@
+{
+    "name": "mksec/SilexSSOBridge",
+    "autoload": {
+        "psr-4": { "Silex\\Provider\\": "src" }
+    }
+}

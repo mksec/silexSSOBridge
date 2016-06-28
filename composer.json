@@ -1,5 +1,8 @@
 {
     "name": "mksec/SilexSSOBridge",
+    "require": {
+        "symfony/security": "^3.1"
+    },
     "autoload": {
         "psr-4": { "Silex\\Provider\\": "src" }
     }

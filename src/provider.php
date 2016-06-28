@@ -22,8 +22,24 @@
  *  2016 Alexander Haase <ahaase@alexhaase.de>
  */
 
-require_once __DIR__ .'/listener.php';
-require_once __DIR__ .'/provider.php';
-require_once __DIR__ .'/factory.php';
+namespace Silex\Provider\SSO;
+
+use Symfony\Component\Security\Core\Authentication\Provider\
+	AuthenticationProviderInterface;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
+
+
+class Provider implements AuthenticationProviderInterface
+{
+	public function authenticate(TokenInterface $token)
+	{
+	}
+
+	public function supports(TokenInterface $token)
+	{
+		return $token instanceof UsernamePasswordToken;
+	}
+}
 
 ?>

@@ -37,8 +37,10 @@ class JasnySSO implements ServiceProviderInterface
 		$app['security.authentication_listener.factory.sso'] = $app->protect(
 			function ($name, $options) use ($app) {
 				$app['security.authentication_provider.'.$name.'.sso'] =
-					function () use ($app) {
-						return new Provider();
+					function () use ($app, $options) {
+						return new Provider($options['server'],
+							$options['broker']['id'],
+							$options['broker']['secret']);
 					};
 
 				$app['security.authentication_listener.'.$name.'.sso'] =

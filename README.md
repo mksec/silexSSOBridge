@@ -11,6 +11,45 @@ Anyone is welcome to contribute. Simply fork this repository, make your changes 
 
 You found a bug? Please fill out an [issue](https://github.com/mksec/SilexSSOBridge/issues) and include any data to reproduce the bug.
 
+## Usage
+
+Using the SSO bridge is as easy to use as any other AuthenticationServiceProvider - just register and configure in your firewall:
+
+```php
+$app = new Silex\Application;
+
+$app->register(new Silex\Provider\SessionServiceProvider);
+$app->register(new Silex\Provider\SSO\JasnySSO);
+
+$app->register(new Silex\Provider\SecurityServiceProvider(), array(
+	'security.firewalls' => array(
+		'login' => array(
+			'pattern' => '^/login$'
+		),
+		'secured_area' => array(
+			'pattern' => '^.*$',
+			'form' => array(
+				'login_path' => '/login',
+				'check_path' => '/login_check',
+			),
+			'logout' => array(
+				'logout_path' => '/logout'
+			),
+
+			// Settings for Jasny\SSO:
+			'sso' => array(
+				'server' => "http://localhost:9000",
+				'broker' => array(
+					'id' => 'Greg',
+					'secret' => '7pypoox2pc'
+				)
+			)
+		)
+	)
+));
+
+```
+
 #### Contributors
 
 [Alexander Haase](https://github.com/alehaa)

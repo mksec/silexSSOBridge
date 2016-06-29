@@ -51,6 +51,11 @@ class JasnySSO implements ServiceProviderInterface
 						);
 					};
 
+				$app['security.authentication_listener.'.$name.'.logout']
+					->addHandler(new LogoutHandler($options['server'],
+						$options['broker']['id'],
+						$options['broker']['secret']));
+
 				return array(
 					'security.authentication_provider.'.$name.'.sso',
 					'security.authentication_listener.'.$name.'.sso',

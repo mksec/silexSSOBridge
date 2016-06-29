@@ -25,6 +25,7 @@
 require_once __DIR__ .'/token.php';
 require_once __DIR__ .'/listener.php';
 require_once __DIR__ .'/provider.php';
+require_once __DIR__ .'/logout.php';
 require_once __DIR__ .'/factory.php';
 
 ?>

@@ -37,7 +37,7 @@ use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 
 class Provider implements AuthenticationProviderInterface
 {
-	private $broker;
+	protected $broker;
 
 
 	/** \brief Constructor.

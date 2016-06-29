@@ -64,7 +64,8 @@ class Provider implements AuthenticationProviderInterface
 	 */
 	public function supports(TokenInterface $token)
 	{
-		return $token instanceof UsernamePasswordToken;
+		return ($token instanceof UsernamePasswordToken)
+			|| ($token instanceof EmptyToken);
 	}
 
 
@@ -92,9 +93,22 @@ class Provider implements AuthenticationProviderInterface
 
 		/* Try to authorize the user via the SSO server. */
 		try {
-			$user = $this->broker->login($token->getUsername(),
-			                             $token->getCredentials());
+			/* If token is an UsernamePasswordToken, the user may be logged in
+			 * via username and password. */
+			if ($token instanceof UsernamePasswordToken)
+				$user = $this->broker->login($token->getUsername(),
+				                             $token->getCredentials());
 
+			/* If token is an EmptyToken, check if the user has a running SSO
+			 * session to authenticate. */
+			else if ($token instanceof EmptyToken)
+				$user = $this->broker->getUserInfo();
+
+			else
+				return;
+
+			/* If the user could be authorized, return a new, authorized token
+			 * with all roles returned by the SSO server included. */
 			if ($user)
 				return new UsernamePasswordToken($token->getUsername(), null,
 					'sso', isset($user['roles']) ?

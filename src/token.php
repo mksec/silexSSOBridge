@@ -22,9 +22,21 @@
  *  2016 Alexander Haase <ahaase@alexhaase.de>
  */
 
-require_once __DIR__ .'/token.php';
-require_once __DIR__ .'/listener.php';
-require_once __DIR__ .'/provider.php';
-require_once __DIR__ .'/factory.php';
+namespace Silex\Provider\SSO;
+
+use Symfony\Component\Security\Core\Authentication\Token\AbstractToken;
+
+
+/** \brief Empty token class for SSO login.
+ *
+ * \details This token will store no data, but will be used to check for a
+ *  running SSO session.
+ */
+class EmptyToken extends AbstractToken
+{
+	public function getCredentials()
+	{
+	}
+}
 
 ?>

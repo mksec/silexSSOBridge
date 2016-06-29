@@ -24,26 +24,26 @@
 
 namespace Silex\Provider\SSO;
 
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\Security\Core\Authentication\
 	AuthenticationManagerInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\
 	TokenStorageInterface;
-use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Http\Firewall\ListenerInterface;
 
 
 /** \brief Listener implementation for SSO login.
  *
- * \details This class implements the Silex ListenerInterface to fetch the users
- *  credentials and store them in a token.
+ * \details This class implements a ListenerInterface to set an \ref EmptyToken.
+ *  This token will be used, if no form-input was provided, but to check if the
+ *  user has a running SSO session (will be checked by \ref Provider).
  */
 class Listener implements ListenerInterface
 {
 	protected $tokenStorage;
 	protected $authenticationManager;
+
 
 	public function __construct(
 		TokenStorageInterface $tokenStorage,
@@ -54,27 +54,24 @@ class Listener implements ListenerInterface
 	}
 
 
+	/** \brief Set a new \ref EmptyToken as authenticated token.
+	 *
+	 * \details This method creates a new \ref EmptyToken and sets it as
+	 *  authenticated token. This token will be used, whenever a target behind a
+	 *  firewall is accessed, but not if there was form input. With this token
+	 *  the \ref Provider is able to check for running SSO sessions of the user.
+	 */
 	public function handle(GetResponseEvent $event)
 	{
-		$request = $event->getRequest();
-
-		$username = $request->get('username');
-		$password = $request->get('password');
-
-		if (empty($username) || empty($password))
+		/* If the user is already authenticated, we can skip a new
+		 * authentication to save bandwith. */
+		$token = $this->tokenStorage->getToken();
+		if ($token && $token->isAuthenticated())
 			return;
 
 
-		$token = new UsernamePasswordToken($username, $password, "sso");
-
-		try {
-			$authToken = $this->authenticationManager->authenticate($token);
-			$this->tokenStorage->setToken($authToken);
-
-			return;
-
-		} catch (AuthenticationException $failed) {
-		}
+		$authToken = $this->authenticationManager->authenticate(new EmptyToken);
+		$this->tokenStorage->setToken($authToken);
 	}
 }
 
